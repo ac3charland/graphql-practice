@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/ac3charland/graphql-practice/issues"
   },
-  "homepage": "https://github.com/ac3charland/graphql-practice#readme"
+  "homepage": "https://github.com/ac3charland/graphql-practice#readme",
+  "dependencies": {
+    "apollo-server": "^3.5.0",
+    "graphql": "^16.0.1"
+  }
 }
