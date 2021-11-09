@@ -9,7 +9,12 @@ const typeDefs = gql`
     # This "Book" type defines the queryable fields for every book in our data source.
     type Book {
         title: String
-        author: String
+        author: Author
+    }
+
+    type Author {
+        name: String
+        books: [Book]
     }
 
     # The "Query" type is special: it lists all of the available queries that
@@ -17,17 +22,22 @@ const typeDefs = gql`
     # case, the "books" query returns an array of zero or more Books (defined above).
     type Query {
         books: [Book]
+        authors: [Author]
     }
 `;
 
 const books = [
     {
         title: 'The Awakening',
-        author: 'Kate Chopin',
+        author: {
+            name: 'Kate Chopin'
+        },
     },
     {
         title: 'City of Glass',
-        author: 'Paul Auster',
+        author: {
+            name: 'Paul Auster'
+        },
     },
 ];
 
@@ -36,6 +46,7 @@ const books = [
 const resolvers = {
     Query: {
         books: () => books,
+        authors: () => books.map(book => book.author)
     },
 };
 
