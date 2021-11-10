@@ -9,12 +9,16 @@ const typeDefs = gql`
     # This "Book" type defines the queryable fields for every book in our data source.
     type Book {
         title: String!
-        author: Author
+        author: Author!
     }
 
     type Author {
         name: String!
-        books: [Book]
+    }
+
+    type Library {
+        branch: String!
+        books: [Book!]
     }
 
     # The "Query" type is special: it lists all of the available queries that
@@ -24,21 +28,30 @@ const typeDefs = gql`
         books: [Book]
         book(title: String!): Book
         authors: [Author]
+        libraries: [Library]
     }
 `;
 
+const libraries = [
+    {
+        branch: 'downtown'
+    },
+    {
+        branch: 'riverside'
+    },
+];
+
+// The branch field of a book indicates which library has it in stock
 const books = [
     {
         title: 'The Awakening',
-        author: {
-            name: 'Kate Chopin'
-        },
+        author: 'Kate Chopin',
+        branch: 'riverside'
     },
     {
         title: 'City of Glass',
-        author: {
-            name: 'Paul Auster'
-        },
+        author: 'Paul Auster',
+        branch: 'downtown'
     },
 ];
 
@@ -50,8 +63,23 @@ const resolvers = {
         book: (parent, args, context, info) => {
             return books.find(book => book.title === args.title)
         },
-        authors: () => books.map(book => book.author)
+        authors: () => books.map(book => ({name: book.author})),
+        libraries: () => {
+            return libraries
+        }
     },
+    Library: {
+        books: parent => {
+            return books.filter(book => book.branch === parent.branch)
+        }
+    },
+    Book: {
+        author: (parent) => {
+            return {
+                name: parent.author
+            }
+        }
+    }
 };
 
 // The ApolloServer constructor requires two parameters: your schema
