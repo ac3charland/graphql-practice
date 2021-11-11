@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server'
-import { Resolvers, Book } from './generated/graphql'
+import { Resolvers } from './generated/graphql'
 
 const libraries = [
     {
