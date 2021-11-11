@@ -30,32 +30,24 @@ const books = [
 // that together define the "shape" of queries that are executed against
 // your data.
 export const typeDefs = gql`
-    # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-    # This "Book" type defines the queryable fields for every book in our data source.
-    type Book {
+    type Film {
+        id: String!
         title: String!
-        author: Author!
-        branch: String!
+        originalTitle: String!
+        originalTitleRomanised: String!
+        description: String!
+        director: String!
+        producer: String!
+        yearReleased: Int!
+        runningTime: Int!
+        banner: String!
+        image: String!
+        rtScore: Int!
     }
 
-    type Author {
-        name: String!
-    }
-
-    type Library {
-        branch: String!
-        books: [Book!]
-    }
-
-    # The "Query" type is special: it lists all of the available queries that
-    # clients can execute, along with the return type for each. In this
-    # case, the "books" query returns an array of zero or more Books (defined above).
     type Query {
-        books: [Book]
-        book(title: String!): Book
-        authors: [Author]
-        libraries: [Library]
+        films: [Film!]!
+        film(title: String!): Film
     }
 `;
 
@@ -63,29 +55,7 @@ export const typeDefs = gql`
 // schema. This resolver retrieves books from the "books" array above.
 export const resolvers: Resolvers = {
     Query: {
-        books: () => books.map(book => ({
-            ...book,
-            author: {
-                name: book.author
-            }
-        })),
-        book: (parent, args) => {
-            const book = books.find(book => book.title === args.title)
-            return book ? {...book, author: {name: book.author}} : null
-        },
-        authors: () => books.map(book => ({ name: book.author })),
-        libraries: () => {
-            return libraries
-        }
+        films: (root, args, {dataSources}) => dataSources.ghibliAPI.getAllFilms(),
+        film: (root, {title}, {dataSources}) => dataSources.ghibliAPI.getAFilm(title)
     },
-    Library: {
-        books: parent => {
-            return books.filter(book => book.branch === parent.branch).map(book => ({
-                ...book,
-                author: {
-                    name: book.author
-                }
-            }))
-        }
-    }
 };
