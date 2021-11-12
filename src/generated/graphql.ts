@@ -20,6 +20,11 @@ export type Creator = {
   produced: Array<Film>;
 };
 
+export type CreatorFind = {
+  film?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 export type Film = {
   __typename?: 'Film';
   banner: Scalars['String'];
@@ -38,15 +43,44 @@ export type Film = {
 
 export type Query = {
   __typename?: 'Query';
+  directorByFilm?: Maybe<Creator>;
+  directorByName?: Maybe<Creator>;
   directors: Array<Creator>;
   film?: Maybe<Film>;
   films: Array<Film>;
+  producerByFilm?: Maybe<Creator>;
+  producerByName?: Maybe<Creator>;
   producers: Array<Creator>;
+};
+
+
+export type QueryDirectorByFilmArgs = {
+  title?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryDirectorByNameArgs = {
+  name?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryDirectorsArgs = {
+  find?: Maybe<CreatorFind>;
 };
 
 
 export type QueryFilmArgs = {
   title: Scalars['String'];
+};
+
+
+export type QueryProducerByFilmArgs = {
+  title?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryProducerByNameArgs = {
+  name?: Maybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -121,6 +155,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Creator: ResolverTypeWrapper<Creator>;
+  CreatorFind: CreatorFind;
   Film: ResolverTypeWrapper<Film>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
@@ -131,6 +166,7 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   Creator: Creator;
+  CreatorFind: CreatorFind;
   Film: Film;
   Int: Scalars['Int'];
   Query: {};
@@ -161,9 +197,13 @@ export type FilmResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  directors?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType>;
+  directorByFilm?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, RequireFields<QueryDirectorByFilmArgs, never>>;
+  directorByName?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, RequireFields<QueryDirectorByNameArgs, never>>;
+  directors?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType, RequireFields<QueryDirectorsArgs, never>>;
   film?: Resolver<Maybe<ResolversTypes['Film']>, ParentType, ContextType, RequireFields<QueryFilmArgs, 'title'>>;
   films?: Resolver<Array<ResolversTypes['Film']>, ParentType, ContextType>;
+  producerByFilm?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, RequireFields<QueryProducerByFilmArgs, never>>;
+  producerByName?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, RequireFields<QueryProducerByNameArgs, never>>;
   producers?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType>;
 }>;
 

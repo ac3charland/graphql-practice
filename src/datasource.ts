@@ -83,8 +83,28 @@ export class GhibliAPI extends RESTDataSource {
         return creators.filter(creator => creator.directed.length)
     }
 
+    async getADirectorByName(name: String): Promise<Creator | undefined> {
+        const creators = await this.getAllDirectors()
+        return creators.find(creator => creator.name === name)
+    }
+
+    async getADirectorByFilm(title: string): Promise<Creator | undefined> {
+        const creators = await this.getAllDirectors()
+        return creators.find(creator => creator.directed.find(film => film.title === title))
+    }
+
     async getAllProducers(): Promise<Creator[]> {
         const creators = await this.getAllCreators()
         return creators.filter(creator => creator.produced.length)
+    }
+
+    async getAProducerByName(name: String): Promise<Creator | undefined> {
+        const creators = await this.getAllProducers()
+        return creators.find(creator => creator.name === name)
+    }
+
+    async getAProducerByFilm(title: string): Promise<Creator | undefined> {
+        const creators = await this.getAllDirectors()
+        return creators.find(creator => creator.produced.find(film => film.title === title))
     }
 }
