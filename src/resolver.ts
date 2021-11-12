@@ -1,31 +1,6 @@
 import { gql } from 'apollo-server'
 import { Resolvers } from './generated/graphql'
 
-const libraries = [
-    {
-        branch: 'downtown'
-    },
-    {
-        branch: 'riverside'
-    },
-];
-
-// The branch field of a book indicates which library has it in stock
-const books = [
-    {
-        title: 'The Awakening',
-        author: 'Kate Chopin',
-        branch: 'riverside'
-    },
-    {
-        title: 'City of Glass',
-        author: 'Paul Auster',
-        branch: 'downtown'
-    },
-];
-
-
-
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
@@ -45,9 +20,17 @@ export const typeDefs = gql`
         rtScore: Int!
     }
 
+    type Creator {
+        name: String!
+        directed: [Film!]!
+        produced: [Film!]!
+    }
+
     type Query {
         films: [Film!]!
         film(title: String!): Film
+        directors: [Creator!]!
+        producers: [Creator!]!
     }
 `;
 
@@ -56,6 +39,8 @@ export const typeDefs = gql`
 export const resolvers: Resolvers = {
     Query: {
         films: (root, args, {dataSources}) => dataSources.ghibliAPI.getAllFilms(),
-        film: (root, {title}, {dataSources}) => dataSources.ghibliAPI.getAFilm(title)
+        film: (root, {title}, {dataSources}) => dataSources.ghibliAPI.getAFilm(title),
+        directors: (root, args, {dataSources}) => dataSources.ghibliAPI.getAllDirectors(),
+        producers: (root, args, {dataSources}) => dataSources.ghibliAPI.getAllProducers(),
     },
 };

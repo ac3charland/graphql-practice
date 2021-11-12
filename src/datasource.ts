@@ -1,5 +1,5 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { Film } from './generated/graphql'
+import { Creator, Film } from './generated/graphql'
 
 interface RESTFilm {
     id: string
@@ -43,5 +43,48 @@ export class GhibliAPI extends RESTDataSource {
     async getAFilm(title: string): Promise<Film | undefined> {
         const films = await this.getAllFilms()
         return films.find((film: any) => film.title === title)
+    }
+
+    async getAllCreators(): Promise<Creator[]> {
+        const films = await this.getAllFilms()
+        return films.reduce((creators, film) => {
+            const {director, producer, title} = film
+
+            const directorMatch = creators.find(creator => creator.name === director)
+            if (!directorMatch) {
+                creators.push({
+                    name: director,
+                    directed: [film],
+                    produced: []
+                })
+            }
+            else {
+                directorMatch.directed.push(film)
+            }
+
+            const producerMatch = creators.find(creator => creator.name === producer)
+            if (!producerMatch) {
+                creators.push({
+                    name: producer,
+                    directed: [],
+                    produced: [film]
+                })
+            }
+            else {
+                producerMatch.produced.push(film)
+            }
+
+            return creators
+        }, [] as Creator[])
+    }
+
+    async getAllDirectors(): Promise<Creator[]> {
+        const creators = await this.getAllCreators()
+        return creators.filter(creator => creator.directed.length)
+    }
+
+    async getAllProducers(): Promise<Creator[]> {
+        const creators = await this.getAllCreators()
+        return creators.filter(creator => creator.produced.length)
     }
 }

@@ -13,6 +13,13 @@ export type Scalars = {
   Float: number;
 };
 
+export type Creator = {
+  __typename?: 'Creator';
+  directed: Array<Film>;
+  name: Scalars['String'];
+  produced: Array<Film>;
+};
+
 export type Film = {
   __typename?: 'Film';
   banner: Scalars['String'];
@@ -31,8 +38,10 @@ export type Film = {
 
 export type Query = {
   __typename?: 'Query';
+  directors: Array<Creator>;
   film?: Maybe<Film>;
   films: Array<Film>;
+  producers: Array<Creator>;
 };
 
 
@@ -111,6 +120,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Creator: ResolverTypeWrapper<Creator>;
   Film: ResolverTypeWrapper<Film>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
@@ -120,10 +130,18 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
+  Creator: Creator;
   Film: Film;
   Int: Scalars['Int'];
   Query: {};
   String: Scalars['String'];
+}>;
+
+export type CreatorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Creator'] = ResolversParentTypes['Creator']> = ResolversObject<{
+  directed?: Resolver<Array<ResolversTypes['Film']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  produced?: Resolver<Array<ResolversTypes['Film']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type FilmResolvers<ContextType = any, ParentType extends ResolversParentTypes['Film'] = ResolversParentTypes['Film']> = ResolversObject<{
@@ -143,11 +161,14 @@ export type FilmResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  directors?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType>;
   film?: Resolver<Maybe<ResolversTypes['Film']>, ParentType, ContextType, RequireFields<QueryFilmArgs, 'title'>>;
   films?: Resolver<Array<ResolversTypes['Film']>, ParentType, ContextType>;
+  producers?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  Creator?: CreatorResolvers<ContextType>;
   Film?: FilmResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;
