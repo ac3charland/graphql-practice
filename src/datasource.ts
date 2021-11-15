@@ -1,5 +1,5 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { Creator, Film } from './generated/graphql'
+import { Creator, CreatorFind, Film, FilmFind } from './generated/graphql'
 
 interface RESTFilm {
     id: string
@@ -40,9 +40,17 @@ export class GhibliAPI extends RESTDataSource {
         return films.map((film: RESTFilm) => this.reshapeFilm(film))
     }
 
-    async getAFilm(title: string): Promise<Film | undefined> {
-        const films = await this.getAllFilms()
-        return films.find((film: any) => film.title === title)
+    async getFilms(find: FilmFind): Promise<Film[]> {
+        let films = await this.getAllFilms()
+
+        Object.keys(find).forEach(key => {
+            const queryType = key as keyof FilmFind
+            if (find[queryType]) {
+                films = films.filter(film => film[queryType] === find[queryType])
+            }
+        })
+
+        return films
     }
 
     async getAllCreators(): Promise<Creator[]> {
@@ -78,33 +86,33 @@ export class GhibliAPI extends RESTDataSource {
         }, [] as Creator[])
     }
 
-    async getAllDirectors(): Promise<Creator[]> {
+    async getDirectors(find: CreatorFind): Promise<Creator[]> {
         const creators = await this.getAllCreators()
-        return creators.filter(creator => creator.directed.length)
+        let directors = creators.filter(creator => creator.directed.length)
+
+        if (find?.film) {
+            directors = directors.filter(director => director.directed.find(film => film.title === find.film))
+        }
+
+        if (find?.name) {
+            directors = directors.filter(director => director.name === find.name)
+        }
+
+        return directors
     }
 
-    async getADirectorByName(name: String): Promise<Creator | undefined> {
-        const creators = await this.getAllDirectors()
-        return creators.find(creator => creator.name === name)
-    }
-
-    async getADirectorByFilm(title: string): Promise<Creator | undefined> {
-        const creators = await this.getAllDirectors()
-        return creators.find(creator => creator.directed.find(film => film.title === title))
-    }
-
-    async getAllProducers(): Promise<Creator[]> {
+    async getProducers(find: CreatorFind): Promise<Creator[]> {
         const creators = await this.getAllCreators()
-        return creators.filter(creator => creator.produced.length)
-    }
+        let producers = creators.filter(creator => creator.produced.length)
 
-    async getAProducerByName(name: String): Promise<Creator | undefined> {
-        const creators = await this.getAllProducers()
-        return creators.find(creator => creator.name === name)
-    }
+        if (find?.film) {
+            producers = producers.filter(producer => producer.produced.find(film => film.title === find.film))
+        }
 
-    async getAProducerByFilm(title: string): Promise<Creator | undefined> {
-        const creators = await this.getAllDirectors()
-        return creators.find(creator => creator.produced.find(film => film.title === title))
+        if (find?.name) {
+            producers = producers.filter(producer => producer.name === find.name)
+        }
+
+        return producers
     }
 }

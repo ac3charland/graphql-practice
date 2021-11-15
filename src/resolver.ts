@@ -31,15 +31,17 @@ export const typeDefs = gql`
         film: String
     }
 
+    input FilmFind {
+        title: String
+        director: String
+        producer: String
+        yearReleased: Int
+    }
+
     type Query {
-        films: [Film!]!
-        film(title: String!): Film
+        films(find: FilmFind): [Film!]!
         directors(find: CreatorFind): [Creator!]!
-        directorByName(name: String): Creator
-        directorByFilm(title: String): Creator
-        producers: [Creator!]!
-        producerByName(name: String): Creator
-        producerByFilm(title: String): Creator
+        producers(find: CreatorFind): [Creator!]!
     }
 `;
 
@@ -47,13 +49,8 @@ export const typeDefs = gql`
 // schema. This resolver retrieves books from the "books" array above.
 export const resolvers: Resolvers = {
     Query: {
-        films: (root, args, context) => context.dataSources.ghibliAPI.getAllFilms(),
-        film: (root, {title}, {dataSources}) => dataSources.ghibliAPI.getAFilm(title),
-        directors: (root, args, {dataSources}) => dataSources.ghibliAPI.getDirectors(),
-        directorByName: (root, {name}, {dataSources}) => dataSources.ghibliAPI.getADirectorByName(name),
-        directorByFilm: (root, {title}, {dataSources}) => dataSources.ghibliAPI.getADirectorByFilm(title),
-        producers: (root, args, {dataSources}) => dataSources.ghibliAPI.getAllProducers(),
-        producerByName: (root, {name}, {dataSources}) => dataSources.ghibliAPI.getAProducerByName(name),
-        producerByFilm: (root, {title}, {dataSources}) => dataSources.ghibliAPI.getAProducerByName(title),
+        films: (root, {find}, context) => context.dataSources.ghibliAPI.getFilms(find),
+        directors: (root, {find}, {dataSources}) => dataSources.ghibliAPI.getDirectors(find),
+        producers: (root, {find}, {dataSources}) => dataSources.ghibliAPI.getProducers(find),
     },
 };
