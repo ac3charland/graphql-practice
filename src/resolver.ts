@@ -20,6 +20,13 @@ export const typeDefs = gql`
         rtScore: Int!
     }
 
+    input FilmFind {
+        title: String
+        director: String
+        producer: String
+        yearReleased: Int
+    }
+
     type Creator {
         name: String!
         directed: [Film!]!
@@ -31,17 +38,10 @@ export const typeDefs = gql`
         film: String
     }
 
-    input FilmFind {
-        title: String
-        director: String
-        producer: String
-        yearReleased: Int
-    }
-
     type Query {
-        films(find: FilmFind): [Film!]!
-        directors(find: CreatorFind): [Creator!]!
-        producers(find: CreatorFind): [Creator!]!
+        films(find: FilmFind, sort: String): [Film!]!
+        directors(find: CreatorFind, sort: String): [Creator!]!
+        producers(find: CreatorFind, sort: String): [Creator!]!
     }
 `;
 
@@ -49,8 +49,8 @@ export const typeDefs = gql`
 // schema. This resolver retrieves books from the "books" array above.
 export const resolvers: Resolvers = {
     Query: {
-        films: (root, {find}, context) => context.dataSources.ghibliAPI.getFilms(find),
-        directors: (root, {find}, {dataSources}) => dataSources.ghibliAPI.getDirectors(find),
-        producers: (root, {find}, {dataSources}) => dataSources.ghibliAPI.getProducers(find),
+        films: (root, {find, sort}, context) => context.dataSources.ghibliAPI.getFilms(find, sort),
+        directors: (root, {find, sort}, {dataSources}) => dataSources.ghibliAPI.getDirectors(find, sort),
+        producers: (root, {find, sort}, {dataSources}) => dataSources.ghibliAPI.getProducers(find, sort),
     },
 };

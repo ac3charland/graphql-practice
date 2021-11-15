@@ -58,16 +58,19 @@ export type Query = {
 
 export type QueryDirectorsArgs = {
   find?: Maybe<CreatorFind>;
+  sort?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryFilmsArgs = {
   find?: Maybe<FilmFind>;
+  sort?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryProducersArgs = {
   find?: Maybe<CreatorFind>;
+  sort?: Maybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;

@@ -35,20 +35,58 @@ export class GhibliAPI extends RESTDataSource {
         }
     }
 
+    compareFunction<Type>(sortKey: keyof Type): (a: Type, b: Type) => number {
+        return (a: Type, b: Type) => {
+            const aValue = a[sortKey]
+            const bValue = b[sortKey]
+            
+            if (typeof aValue === 'string' && typeof bValue === 'string') {
+                if (aValue.toUpperCase() < bValue.toUpperCase()) {
+                    return -1
+                }
+                else if (aValue.toUpperCase() > bValue.toUpperCase()) {
+                    return 1
+                }
+            }
+            else if (typeof aValue === 'number' && typeof bValue === 'number') {
+                return aValue - bValue
+            }
+
+            return 0
+        }
+    }
+
+    reverseCompareFunction<Type>(sortKey: keyof Type): (a: Type, b: Type) => number {
+        return (a: Type, b: Type) => -1 * this.compareFunction<Type>(sortKey)(a, b)
+    }
+
     async getAllFilms(): Promise<Film[]> {
         const films = await this.get('films')
         return films.map((film: RESTFilm) => this.reshapeFilm(film))
     }
 
-    async getFilms(find: FilmFind): Promise<Film[]> {
+    async getFilms(find?: FilmFind, sort?: string): Promise<Film[]> {
         let films = await this.getAllFilms()
 
-        Object.keys(find).forEach(key => {
-            const queryType = key as keyof FilmFind
-            if (find[queryType]) {
-                films = films.filter(film => film[queryType] === find[queryType])
+        if (find) {
+            Object.keys(find).forEach(key => {
+                const queryType = key as keyof FilmFind
+                if (find[queryType]) {
+                    films = films.filter(film => film[queryType] === find[queryType])
+                }
+            })
+        }
+
+        if (sort && films.length && (sort in films[0] || sort.substring(1) in films[0])) {
+            if (sort.charAt(0) === '!') {
+                const sortKey = sort.substring(1) as keyof Film
+                films = films.sort(this.reverseCompareFunction<Film>(sortKey))
             }
-        })
+            else {
+                const sortKey = sort as keyof Film
+                films = films.sort(this.compareFunction<Film>(sortKey))
+            }
+        }
 
         return films
     }
@@ -86,7 +124,7 @@ export class GhibliAPI extends RESTDataSource {
         }, [] as Creator[])
     }
 
-    async getDirectors(find: CreatorFind): Promise<Creator[]> {
+    async getDirectors(find?: CreatorFind, sort?: string): Promise<Creator[]> {
         const creators = await this.getAllCreators()
         let directors = creators.filter(creator => creator.directed.length)
 
@@ -98,10 +136,21 @@ export class GhibliAPI extends RESTDataSource {
             directors = directors.filter(director => director.name === find.name)
         }
 
+        if (sort && directors.length && (sort in directors[0] || sort.substring(1) in directors[0])) {
+            if (sort.charAt(0) === '!') {
+                const sortKey = sort.substring(1) as keyof Creator
+                directors = directors.sort(this.reverseCompareFunction<Creator>(sortKey))
+            }
+            else {
+                const sortKey = sort as keyof Creator
+                directors = directors.sort(this.compareFunction<Creator>(sortKey))
+            }
+        }
+
         return directors
     }
 
-    async getProducers(find: CreatorFind): Promise<Creator[]> {
+    async getProducers(find?: CreatorFind, sort?: string): Promise<Creator[]> {
         const creators = await this.getAllCreators()
         let producers = creators.filter(creator => creator.produced.length)
 
@@ -111,6 +160,17 @@ export class GhibliAPI extends RESTDataSource {
 
         if (find?.name) {
             producers = producers.filter(producer => producer.name === find.name)
+        }
+
+        if (sort && producers.length && (sort in producers[0] || sort.substring(1) in producers[0])) {
+            if (sort.charAt(0) === '!') {
+                const sortKey = sort.substring(1) as keyof Creator
+                producers = producers.sort(this.reverseCompareFunction<Creator>(sortKey))
+            }
+            else {
+                const sortKey = sort as keyof Creator
+                producers = producers.sort(this.compareFunction<Creator>(sortKey))
+            }
         }
 
         return producers
