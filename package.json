@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node dist/server",
     "build": "tsc -p . && ncp src dist",
     "test": "jest",
+    "postinstall": "tsc",
     "test:watch": "jest --verbose --detectOpenHandles",
     "generate:types": "graphql-codegen --config codegen.yml",
     "start:dev": "npm run build:dev",
