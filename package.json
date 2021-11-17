@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index",
-    "build": "tsc -p . && ncp src dist",
     "test": "jest",
     "postinstall": "tsc",
     "test:watch": "jest --verbose --detectOpenHandles",
