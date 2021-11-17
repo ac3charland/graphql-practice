@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/server",
+    "start": "node dist/index",
     "build": "tsc -p . && ncp src dist",
     "test": "jest",
     "postinstall": "tsc",
