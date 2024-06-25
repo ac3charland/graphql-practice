@@ -19,7 +19,7 @@ interface RESTFilm {
 export class GhibliAPI extends RESTDataSource {
     constructor() {
         super()
-        this.baseURL = 'https://ghibliapi.herokuapp.com/'
+        this.baseURL = "https://ghibliapi.vercel.app/";
     }
 
     reshapeFilm(film: RESTFilm): Film {
