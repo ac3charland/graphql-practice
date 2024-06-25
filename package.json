@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index",
+    "build": "netlify-lambda build src",
+    "start": "netlify-lambda serve src",
     "test": "jest",
     "postinstall": "tsc",
     "test:watch": "jest --verbose --detectOpenHandles",
@@ -29,7 +30,8 @@
   "dependencies": {
     "apollo-datasource-rest": "^3.4.0",
     "apollo-server": "^3.5.0",
-    "graphql": "^16.0.1"
+    "graphql": "^16.0.1",
+    "netlify-lambda": "^2.0.16"
   },
   "devDependencies": {
     "@graphql-codegen/add": "^3.1.0",
