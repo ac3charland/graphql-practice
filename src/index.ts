@@ -12,11 +12,7 @@ const server = new ApolloServer({
   resolvers,
   dataSources: () => ({
     ghibliAPI: new GhibliAPI(),
-  }),
-  cors: {
-    origin: "*",
-    credentials: true,
-  },
+  })
 });
 
 // The `listen` method launches a web server.
