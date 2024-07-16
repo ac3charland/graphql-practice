@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server'
+import { gql } from 'graphql-tag'
 import { Resolvers } from './generated/graphql'
 
 // A schema is a collection of type definitions (hence "typeDefs")

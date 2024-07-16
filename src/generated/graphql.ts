@@ -1,9 +1,9 @@
 import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -21,8 +21,8 @@ export type Creator = {
 };
 
 export type CreatorFind = {
-  film?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  film?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type Film = {
@@ -42,10 +42,10 @@ export type Film = {
 };
 
 export type FilmFind = {
-  director?: Maybe<Scalars['String']>;
-  producer?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  yearReleased?: Maybe<Scalars['Int']>;
+  director?: InputMaybe<Scalars['String']>;
+  producer?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  yearReleased?: InputMaybe<Scalars['Int']>;
 };
 
 export type Query = {
@@ -57,20 +57,20 @@ export type Query = {
 
 
 export type QueryDirectorsArgs = {
-  find?: Maybe<CreatorFind>;
-  sort?: Maybe<Scalars['String']>;
+  find?: InputMaybe<CreatorFind>;
+  sort?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryFilmsArgs = {
-  find?: Maybe<FilmFind>;
-  sort?: Maybe<Scalars['String']>;
+  find?: InputMaybe<FilmFind>;
+  sort?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryProducersArgs = {
-  find?: Maybe<CreatorFind>;
-  sort?: Maybe<Scalars['String']>;
+  find?: InputMaybe<CreatorFind>;
+  sort?: InputMaybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -96,7 +96,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -189,9 +189,9 @@ export type FilmResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  directors?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType, RequireFields<QueryDirectorsArgs, never>>;
-  films?: Resolver<Array<ResolversTypes['Film']>, ParentType, ContextType, RequireFields<QueryFilmsArgs, never>>;
-  producers?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType, RequireFields<QueryProducersArgs, never>>;
+  directors?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType, Partial<QueryDirectorsArgs>>;
+  films?: Resolver<Array<ResolversTypes['Film']>, ParentType, ContextType, Partial<QueryFilmsArgs>>;
+  producers?: Resolver<Array<ResolversTypes['Creator']>, ParentType, ContextType, Partial<QueryProducersArgs>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{

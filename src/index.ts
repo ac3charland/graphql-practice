@@ -1,21 +1,27 @@
-const { ApolloServer } = require("apollo-server");
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
 
-import { GhibliAPI } from "./datasource";
-import { typeDefs, resolvers } from "./resolver";
+import { GhibliAPI } from "./datasource.js";
+import { typeDefs, resolvers } from "./resolver.js";
 
-const port = process.env.PORT || "4000";
+const port: number = parseInt(process.env.PORT || "") || 4000;
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  dataSources: () => ({
-    ghibliAPI: new GhibliAPI(),
-  })
 });
 
-// The `listen` method launches a web server.
-server.listen({ port }).then(({ url }: any) => {
-  console.log(`🚀  Server ready at ${url}`);
+const { url } = await startStandaloneServer(server, {
+  context: async ({ req }) => {
+    const token = req.headers.token as string;
+    const { cache } = server;
+    return {
+      token,
+      dataSources: { ghibliAPI: new GhibliAPI({ cache, token }) },
+    };
+  },
+  listen: { port },
 });
+console.log(`🚀  Server ready at ${url}`);
